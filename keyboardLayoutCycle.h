@@ -14,15 +14,15 @@ typedef enum {
 		TOML_ERROR,
 } TomlStatus_t;
 
-int loadConfig(const char *configFileName);
+int loadConfig(const char* configFileName);
 
-int getConfigFileFd(const char *configFileName);
+int getConfigFileFd(const char* configFileName);
 
-TomlStatus_t readNextTomlElement(int fd, CharBuffer_t *readBuffer);
+TomlStatus_t readNextTomlElement(int fd, CharBuffer_t* readBuffer);
 
 void initConfig();
 
-void removeAllOfChar(char *src, char *dest, char c);
+void removeAllOfChar(char* src, char* dest, char c);
 
 void freeKeyboardDists();
 
@@ -30,8 +30,8 @@ void closeHandler(int sig);
 
 void changeLayoutHandler(int sig);
 
-void setKeyboardLayout(char *layout);
+void setKeyboardLayout(char* layout);
 
-void getActualLayout(char *layout);
+void getActualLayout(char* layout);
 
 void* fileChangeListener(void*);

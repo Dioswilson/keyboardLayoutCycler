@@ -13,7 +13,7 @@
 
 char configFile[81] = {};
 
-char **keyboardDists;
+char** keyboardDists;
 int keyboardDistsSize = INIT_DIST_QUANT;
 int keyboardDistsQuant = 0;
 int currentDist = 0;
@@ -26,7 +26,7 @@ int main() {
 	int status = 0;
 	pthread_t listenerThread;
 
-	keyboardDists = malloc(sizeof(char *) * INIT_DIST_QUANT);
+	keyboardDists = malloc(sizeof(char*) * INIT_DIST_QUANT);
 	for (int i = 0; i < INIT_DIST_QUANT; i++) {
 		keyboardDists[i] = malloc(sizeof(char) * KEYBOARD_DIST_MAX_LENGTH);
 	}
@@ -61,10 +61,10 @@ int main() {
 }
 
 
-int loadConfig(const char *configFileName) {
+int loadConfig(const char* configFileName) {
 	CharBuffer_t readBuffer = {};
 	TomlStatus_t tomlStatus = TOML_SUCCESS;
-	char *bufferCopy = NULL;
+	char* bufferCopy = NULL;
 
 	int fd = getConfigFileFd(configFileName);
 
@@ -76,7 +76,7 @@ int loadConfig(const char *configFileName) {
 	for (int i = 0; i < keyboardDistsQuant; i++) {
 		memset(keyboardDists[i], 0, KEYBOARD_DIST_MAX_LENGTH);
 	}
-	keyboardDistsQuant=0;
+	keyboardDistsQuant = 0;
 
 	while (tomlStatus == TOML_SUCCESS) {
 		tomlStatus = readNextTomlElement(fd, &readBuffer);
@@ -86,13 +86,13 @@ int loadConfig(const char *configFileName) {
 			}
 			//printf("Contet: %s\n", readBuffer.content);
 
-			bufferCopy = (char *) malloc(strlen(readBuffer.content));
+			bufferCopy = (char*) malloc(strlen(readBuffer.content));
 			removeAllOfChar(readBuffer.content, bufferCopy, ' ');
 
 			if (strncmp(bufferCopy, "layout_list=", 12) == 0) {
 				// printf("Layout list: %s\n", bufferCopy);
 				//Get the [....] array
-				char *arrayStr = strtok(bufferCopy, "=");
+				char* arrayStr = strtok(bufferCopy, "=");
 				arrayStr = strtok(NULL, "=");
 
 				if (*arrayStr == '[' && arrayStr[strlen(arrayStr) - 1] == ']') {
@@ -102,7 +102,7 @@ int loadConfig(const char *configFileName) {
 					while ((arrayStr = strtok(NULL, "\"")) != NULL) {
 						if (keyboardDistsQuant >= keyboardDistsSize - 2) {
 							keyboardDistsSize *= 2;
-							keyboardDists = realloc(keyboardDists, sizeof(char *) * keyboardDistsSize);
+							keyboardDists = realloc(keyboardDists, sizeof(char*) * keyboardDistsSize);
 							for (int i = keyboardDistsQuant; i < keyboardDistsSize; i++) {
 								keyboardDists[i] = malloc(sizeof(char) * KEYBOARD_DIST_MAX_LENGTH);
 							}
@@ -133,7 +133,7 @@ int loadConfig(const char *configFileName) {
  * @desc Gets configuration file at $HOME/.config/keyboardLayoutCycle with configFileName name
  * @return Returns -1 if error
  * */
-int getConfigFileFd(const char *configFileName) {
+int getConfigFileFd(const char* configFileName) {
 	int status = 0;
 	int fd = 0;
 	off_t fileSize = 0;
@@ -141,7 +141,7 @@ int getConfigFileFd(const char *configFileName) {
 	char defaultConf[sizeof(DEFAULT_CONFIG) + KEYBOARD_DIST_MAX_LENGTH] = {};
 	char currentLayout[KEYBOARD_DIST_MAX_LENGTH] = {};
 
-	const char *homeDir = getenv("HOME");
+	const char* homeDir = getenv("HOME");
 	if (homeDir == NULL) {
 		fprintf(stderr, "Unable to determine the home directory.\n");
 		return -1;
@@ -184,7 +184,7 @@ int getConfigFileFd(const char *configFileName) {
 	return fd;
 }
 
-TomlStatus_t readNextTomlElement(int fd, CharBuffer_t *readBuffer) {
+TomlStatus_t readNextTomlElement(int fd, CharBuffer_t* readBuffer) {
 	TomlStatus_t status = TOML_SUCCESS;
 	int buffPos = 0;
 	bool doRead = true;
@@ -268,7 +268,7 @@ void initConfig() {
 	}
 }
 
-void removeAllOfChar(char *src, char *dest, char c) {
+void removeAllOfChar(char* src, char* dest, char c) {
 	strcpy(dest, src);
 	//TODO: Maybe not do copy, just reomve from OG array
 
@@ -303,22 +303,22 @@ void closeHandler(int sig) {
 	runProgram = false;
 }
 
-void setKeyboardLayout(char *layout) {
+void setKeyboardLayout(char* layout) {
 	pid_t pid = fork();
 
 	if (pid == -1) {
 		perror("fork failed");
 	}
 	else if (pid == 0) {// Child process
-		char *cmdArgs[] = {"/bin/setxkbmap", layout, NULL};
+		char* cmdArgs[] = {"/bin/setxkbmap", layout, NULL};
 		execvp(cmdArgs[0], cmdArgs);
 		perror("Layout change failed");//If execvp returns, it failed
 	}
 }
 
-void getActualLayout(char *layout) {
+void getActualLayout(char* layout) {
 	char buffer[KEYBOARD_DIST_MAX_LENGTH] = {};
-	FILE *fp;
+	FILE* fp;
 
 	fp = popen("/bin/setxkbmap -query", "r");
 	/*Get the value into a variable*/
@@ -330,7 +330,7 @@ void getActualLayout(char *layout) {
 }
 
 
-void *fileChangeListener(void *) {
+void* fileChangeListener(void*) {
 	char eventBuff[INOTIFY_BUFF_SIZE] = {};
 
 	while (runProgram) { //Most likely will be cancelled by main thread

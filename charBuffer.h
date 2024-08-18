@@ -1,10 +1,10 @@
 #ifndef CHARBUFFER_H
 #define CHARBUFFER_H
 
-typedef struct{
-	char* content;
-	int size;
-}CharBuffer_t;
+typedef struct {
+		char* content;
+		int size;
+} CharBuffer_t;
 
 #define BUFF_INIT_SIZE 20
 #define BUFF_MULT 2
