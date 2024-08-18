@@ -54,7 +54,7 @@ int main() {
 		pause();
 	}
 
-	pthread_join(listenerThread, NULL);
+	pthread_cancel(listenerThread);
 
 	freeKeyboardDists();
 	return 0;
@@ -333,7 +333,7 @@ void getActualLayout(char *layout) {
 void *fileChangeListener(void *) {
 	char eventBuff[INOTIFY_BUFF_SIZE] = {};
 
-	while (runProgram) {
+	while (runProgram) { //Most likely will be cancelled by main thread
 		int fd = inotify_init();
 		if (fd == -1) {
 			perror("Could not initialize config listener");
@@ -354,7 +354,6 @@ void *fileChangeListener(void *) {
 
 		close(fd);
 	}
-
 
 	return NULL;
 }
