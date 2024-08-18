@@ -1,0 +1,6 @@
+.idea
+cmake-build-debug
+.cache
+.out
+out
+compile_commands.json
